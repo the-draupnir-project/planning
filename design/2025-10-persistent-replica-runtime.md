@@ -16,11 +16,12 @@ other centralized service architectures draupnir could adopt. As each revision
 issuer needs to be available in memory to each process and node.js doesn't allow
 for shared memory.
 
-Revision issuers themselves as the exist in Draupnir-MPS are essentially actors
-that produce deltas. It is possible for all computation in draupnir can be
-expressed through these actors, and this is desirable because it allows for
-draupnir to start and restart in an instant. We propose that this is the
-direction for draupnir to head in for a future v3.
+Revision issuers themselves as they exist in Draupnir-MPS are essentially actors
+that produce deltas. It is possible for all computation in draupnir to be
+expressed through these actors. This is desirable because it allows for draupnir
+to start and restart in an instant, and it encourages clean and reproducible
+design. We propose that this is the direction for draupnir to head in for a
+future v3.
 
 An alternative is just rewriting everything in Elixir and using mnesia.
 
@@ -206,3 +207,29 @@ actors can crash and be unreliable for message delivery.
 The deltas get written to the persistent store and a message is sent to the
 other threads about the write so that the delta can be read back from the store
 and propagated to dependencies.
+
+## Non-deterministic inputs
+
+The PRR needs non-deterministic inputs in order to do anything useful, such as
+matrix events, commands, and time scheduling.
+
+These are provided by _source replicas_.
+
+### Source replica
+
+A source replica is a system or client provided replica with no dependencies
+that produces deltas. Source replicas provide no data in their records, only the
+deltas are significant.
+
+### Time source replica
+
+Some protections in Draupnir have time-scheduled background tasks, such as
+DraupnirNews.
+
+These should be implemented by having a revision reducer that accepts a tick
+from a time service.
+
+The time source replica is a system provided source replica that persists
+records about when to send ticks to other replicas. Each replica that requires
+time scheduling is given a adaptor replica to bridge them to the time source. So
+that they are not informed about every single tick.
