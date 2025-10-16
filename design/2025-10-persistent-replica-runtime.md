@@ -9,6 +9,8 @@ The matrix-protection-suite has evolved to around a "revision issuers" concept
 to provide deterministic, incremental computation and data-flow in order to
 manage complex interactions and resource intensive operations.
 
+![](./images/2025-10-draupnir-data-flow.png)
+
 This abstraction has not been generalized and is ad-hoc. And the
 matrix-protection-suite had specific and constrained design goals in its early
 development in order to build a new core for the draupnir project:
