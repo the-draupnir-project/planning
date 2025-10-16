@@ -1,35 +1,56 @@
 # Persistent Replica Runtime
 
+The persistent replica runtime is a deterministic incremental computation
+environment.
+
 Background: https://github.com/the-draupnir-project/Draupnir/issues/979
 
-The revision issuer system draupnir has is adhoc and entirely in-memory.
-Attempts to persist specific revision issuers requires a for backing store to be
-written that cannot function as the source of truth for the revision. There is
-also no way to rollback these stores. Transactions between revision issuers are
-not formalized and it is possible for revision issuers to become unsynchronised.
-This would be especially true if e.g. the PolicyRoomRevisions were persisted,
-we'd want to be confident that all deltas from dependency revisions were applied
-in order.
+The matrix-protection-suite has evolved to around a "revision issuers" concept
+to provide deterministic, incremental computation and data-flow in order to
+manage complex interactions and resource intensive operations.
 
-Critically the revision issuer model holds back scaling for draupnir4all or
-other centralized service architectures draupnir could adopt. As each revision
-issuer needs to be available in memory to each process and node.js doesn't allow
-for shared memory.
+This abstraction has not been generalized and is ad-hoc. And the
+matrix-protection-suite had specific and constrained design goals in its early
+development in order to build a new core for the draupnir project:
 
-Revision issuers themselves as they exist in Draupnir-MPS are essentially actors
-that produce deltas. It is possible for all computation in draupnir to be
-expressed through these actors. This is desirable because it allows for draupnir
-to start and restart in an instant, and it encourages clean and reproducible
-design. We propose that this is the direction for draupnir to head in for a
-future v3.
+- Revision issuers are entirely in-memory structures. There are no asynchronous
+  methods to provide data for persistent storage.
+- Attempts to persist specific revision issuers has required for backing stores
+  to be written that are in reality a downstream consumer of the deltas produced
+  by revisions outside of startup time.
+- The backing stores are not generalized either and have virtually no support
+  for rollbacks in failed updates etc.
+- Transactions between revision issuers are not formalized and it is possible
+  for revision issuers to become unsynchronised, if a delta fails to process or
+  is dropped, that effect is permanent until the system is restarted.
+- Further the lack of "transaction" complicates persistence of revisions issuers
+  that are not sources of non-deterministic input e.g. the PolicyRoomRevisions
+  were persisted, we'd want to be confident that all deltas from the source
+  revision (room state) were applied in order.
 
-An alternative is just rewriting everything in Elixir and using mnesia.
-
-NOTE: While this is an overhaul of the underlying infrastructure, we do want to
-commit to phasing this in incrementally without having to suspend development
-like with draupnir-mps.
+Most importantly, the matrix-protection-suite was designed to be used entirely
+within one JS process. Using workers was never a consideration. This holds the
+Draupnir project back from being able to use more centralized service
+architectures. Which would be required to provide a popular service.
 
 ## Proposal
+
+We propose that all computation in Draupnir to be expressed through _replica
+actors_ using a new framework called the persistent replica runtime. This
+transition would happen incrementally, rather than as a focussed effort like the
+transition to the matrix-protection-suite and Draupnir 2.0.
+
+This would give us the following advantages:
+
+- Restart can be immediate and instantaneous.
+- Workload can be balanced across worker threads using actor migration.
+- All core computation is deterministic and reproducible, easing development and
+  testing.
+- All data-flow interactions are explicit and auditable.
+- Effects and effect handlers are first-class, providing not only pre-viewable
+  and auditable consequences for protections, but for all side-effects.
+- The system is fudamentally fault tolerant: all computation is incremental,
+  transactional, and deterministic. And can be restarted at the last delta.
 
 _Revision issuers_ become _persistent replicas_. The live in-memory instance of
 a _revision issuer_ becomes a _replica actor_. A meta-object is introduced to
