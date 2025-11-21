@@ -1,5 +1,37 @@
 # Persistent Replica Runtime
 
+TODO: Safing policy. Intent revision issuers should always run against the
+entire input revisions, not deltas. The safing policy determines when the
+reducers arm. This stops intent issuers running during catch up, and only after
+catch up. Hm i'm not sure this is correct. The members patching policies style
+revision issuer should be what an intent policy looks like, and the output
+replica should really be the replica that is safed. It would seem strange to
+convert an intent replica into soemthing like this thoug. No it is fine. Intent
+replicas always produce recallable effects and model a desired state. Which
+outcome replicas map to the real world. Intent replicas do not produce commands
+for outcome replicas to implement, but instead an overall desired state for them
+to implement. In this sense, the safing policy is not for the intent replica,
+it's for the outcome replica. So we really have an Obligation replica as well as
+an intent replica. Where Obligations are one shot and Intents produce a steady
+state.
+
+TODO: When policy. Intent revision issuers have an evaluation policy
+
+TODO: Intent replica throttle indicator to help the scheduler choose which
+replicas to sacrifice in a CPU exhaustion event.
+
+TODO: Explicitly mention that revisions and deltas can safely be held in memory
+on different workers. since they are immutable.
+
+TODO: Focus on explaining the Replica as the core concept, and revise
+terminology to say snapshot instead of revision and just say "delta stream"
+instead of whatever we use for that. Just call it a state snapshot.
+
+TODO: How to handle replica version changes. Any change to the schema is going
+to cause problems for dependencies. Code changes matter less but obviously
+migration does need to happen. Code changes can effect the contract version
+though if e.g. scope changes massively so it can't just be a schema version.
+
 The persistent replica runtime is a deterministic incremental computation
 environment.
 
