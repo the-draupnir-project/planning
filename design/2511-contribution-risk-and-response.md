@@ -1,5 +1,12 @@
 # Contribution risk and response
 
+This document is about assessing and responding to risk. This document does not
+change the nature of review. Reviews are supposed to be optimistic and
+encouraging, using risk as an excuse to block the author of a contribution will
+be considered a failure to follow the process. The obligation to help
+contributors achieve their goals and merge the PR lies with the maintainers, not
+the contributor. Always be prepared to make requested changes yourself.
+
 ## Quick contribution risk check
 
 Does any of these contexts apply to the contribution?
