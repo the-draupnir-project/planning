@@ -24,6 +24,8 @@ If you are going to do any critical thinking and review, please think critically
 about how the contribution impacts the system first. These are a guideline but
 you must use your own judgement to determine the level of risk.
 
+Use the pull request labels to assign risk contexts to pull requests.
+
 ## Risk classification
 
 - Minimal if none apply
