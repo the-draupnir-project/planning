@@ -5,8 +5,8 @@ change the nature of review. Reviews are supposed to be optimistic and
 encouraging. The obligation to help contributors achieve their goals and merge
 the PR lies with the maintainers, not the contributor. Always be prepared to
 make requested changes yourself to see the contribution through. However
-reviewers are never obliged to approve a change if they are not confident in
-change's the correctness or safety.
+reviewers are never obliged to approve a change if they are not confident in the
+change's correctness or safety.
 
 ## Quick contribution risk check
 
