@@ -93,8 +93,8 @@ available.
 Think pessimistically about authentication and control flow through the
 application. And think about how we arrive to the portion of code in question,
 and where we go next. Think about the bigger picture and then the smaller
-details. If anything is unclear, you MUST not continue and ask for clarification
-or get someone else involved.
+details. If anything is unclear, you MUST not continue, and instead ask for
+clarification or get someone else involved.
 
 ### Test plans
 
@@ -115,3 +115,12 @@ documentation.
 
 When an unsolicited pull request is opened, it's important to try establish
 these expectations retroactively. And to identify and communicate risk.
+
+## Trust under sight
+
+When a contributor summarises work, it's very important to recognise that this
+summary is a declaration of intent, and can only be used within the context of
+expectations management. A summary of changes in the pull request description,
+can never be trusted to provide an exhaustive list of changes made in the
+contribution. It is essential to check the substance of any contribution in
+exhaustion, irregardless of any surrounding context.
