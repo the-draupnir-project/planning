@@ -77,3 +77,10 @@ rooms_.
   to partition on especially when there are multiple input projections. It would
   be highly desirable to do this over adding IO into reducer code which is meant
   to be deterministic.
+
+- While we didn't have time to explore implementation of a protection hook
+  registry. We think that it is possible to create a protection hook registry
+  where each handle on a protection after construction is connected up with the
+  associated input. And disconnected when the protection is disposed. We think
+  this can be done by maintaining a metaobject with a description of each hook
+  that takes the protected rooms set, context, and protection itself as input.
