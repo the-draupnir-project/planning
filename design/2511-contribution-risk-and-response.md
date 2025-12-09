@@ -1,5 +1,12 @@
 # Contribution risk and response
 
+> [!IMPORTANT]
+>
+> We are unable to accept LLM assisted or generated contributions, as we do not
+> feel confident that it is possible for any party to fulfill their obligations
+> under NLnet's generative AI policy
+> https://nlnet.nl/foundation/policies/generativeAI/.
+
 This document is about assessing and responding to risk. This document does not
 change the nature of review. Reviews are supposed to be optimistic and
 encouraging. The obligation to help contributors achieve their goals and merge
