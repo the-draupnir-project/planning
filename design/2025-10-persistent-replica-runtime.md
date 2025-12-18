@@ -1,4 +1,4 @@
-# Persistent Replica Runtime
+# Deterministic Projection System
 
 TODO: Safing policy. Intent revision issuers should always run against the
 entire input revisions, not deltas. The safing policy determines when the
@@ -170,16 +170,12 @@ projections (effect handlers).
 
 Enabled protections should be intent projections.
 
-### Outcome replica (effect handler)
+### Outcome projection (effect handler)
 
-An outcome replica is a special kind of replica that records whether actions
+An outcome replica is a special kind of projection that records whether outcomes
 have been issued for intents. The semantic meaning of the outcome is not
 relevant, e.g. failure to ban a user is still an outcome that needs to be
 recorded and is the outcome of the intent.
-
-outcome replicas for protections are partitioned in the same way as the intent
-replicas, it's just the capability providers are responsible for producing the
-actions.
 
 ## Semantics
 
