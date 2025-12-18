@@ -32,6 +32,8 @@ to cause problems for dependencies. Code changes matter less but obviously
 migration does need to happen. Code changes can effect the contract version
 though if e.g. scope changes massively so it can't just be a schema version.
 
+TODO: Rename replica -> projection + projection node
+
 The persistent replica runtime is a deterministic incremental computation
 environment.
 
@@ -99,97 +101,74 @@ in Node.JS.
 
 ## Concepts
 
-### Record
+### Projection node
 
-The first primitive of the runtime is records. These are synonymous with
-documents from a document store or a database record. Examples include Matrix
-events, policies, room membership.
+Projection nodes are immutable snapshots that accurately reflect a system state
+at the point the node was created.
 
-Records are a concept because they provide us with automatic persistence
-management when the schema provided to a replica description alongside the delta
-schema.
+Projection nodes can reduce input _deltas_ into an _output_ delta, which can
+then be used to produce another projection node that reflects a new system
+state.
 
-### Revision
+### Projection delta
 
-revisions are immutable snapshots that accurately reflect some state at the
-point the revision was created. These are composed of a collection of records.
-
-Revisions are produced by replica actors, and both are described by a replica
-description.
-
-### Delta
-
-Deltas represent the outcome of a computation related to a revision that provide
-a reproducible transformation of the revision state.
+Deltas represent the outcome of a computation related to a projection node that
+provide a reproducible transformation of the projection state.
 
 Delta's have their own identity, a delta ID and backlink to a previous delta.
 
-#### Provenance data
+#### Source delta
 
-Each delta needs to include information about upstream inputs it depends on:
+Source deltas are special because they encapsulate the source of non-determinism
+into the deterministic system. All computation in the system is caused by source
+deltas.
 
-- A revision ID for the revision used to derive the delta.
-- The revision ID's of any revisions that are transitive dependencies, along
-  with the identities of the replicas that issued them.
+### Provenance data
 
-### Revision reducer
+Each delta and projection node needs to include information about upstream
+inputs it depends on.
 
-A revision reducer is stateless code that takes a revision and an external delta
-or data input and produces a new delta specific to the revision.
+Each delta refers to the single source projection node that is the direct cause
+for the current data flow.
 
-### Replica
+Each projection node refers to the current transient source projection nodes
+that have been used to derive the current state.
 
-A replica is the storage layer representation of a specific partitioned
-revision, its records, and its deltas.
+### Projection node reducer
 
-These are ensured to exist by the replica description.
+A projection node reducer is a deterministic function that takes a projection
+node and an input delta and produces a new output delta specific to the
+projection node.
 
-### Replica actor
+### Projection definition
 
-A replica actor is responsible for handling input data, calling revision
-reducers, and persisting new revisions and deltas.
-
-A revision actor is produced by a replica description and is instantiated with
-partition data.
-
-### Replica description
-
-A replica description describes how to build replicas from the partition data,
-and also how to build revision actors.
+A projection definition defines how to build projections from partition data,
+projection node reducers, and what the inputs to the projection are.
 
 ### Rebuild delta
 
 A rebuild delta is a specific kind of delta that is the direct result of a
-change in implementation of a replica. For instance it may be important to issue
-a rebuild delta when bugs are fixed in replica descriptions that meant replica's
-were producing faulty data.
+change in implementation of a projection, ie a change to the projection
+definition. It may be important to issue a rebuild delta when bugs that caused
+projections to produce faulty data are fixed.
 
-### Partition
+The change in projection definition is used as the source delta within a rebuild
+delta.
+
+### Partitioning
+
+When projection definitions are combined with partition data when instantiated.
 
 replicas are partitioned by a key. This key is usually something like a Matrix
 room ID, or the user identifier of a Draupnir instance.
 
-### Actor ID
+### Intent projection (effect)
 
-These prevent multiple live in-memory actors providing for the same replica. The
-scheduler makes sure that there is only ever one live actor per replica
-partition. This does require the scheduler to rebuild all actors if the
-scheduler crashes, but i'm fine with that.
+A intent projection is a special kind of projection that produces an intention
+to see some outcome enacted. These intents are then carried out by outcome
+projections (effect handlers).
 
-### Revision ID
-
-A revision identifier is a specific ULID that is associated with a revision.
-
-### Intent replica (effect)
-
-A intent replica is a special kind of replica that produces an intention to see
-some outcome enacted. These intents are then carried out by outcome issuers
-(effect handler).
-
-Enabled protections should be intent replicas. These protections are partitioned
-by the capability provider set they are using and the draupnir they are
-associated with. They are not associated with the in-memory instance but the
-activation of the protection.
+Enabled protections should be intent projections.
 
 ### Outcome replica (effect handler)
 
