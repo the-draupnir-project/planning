@@ -84,3 +84,7 @@ rooms_.
   associated input. And disconnected when the protection is disposed. We think
   this can be done by maintaining a metaobject with a description of each hook
   that takes the protected rooms set, context, and protection itself as input.
+
+- We discovered that forks in dataflow have to be handled by keeping either side
+  of the fork's source stream dependencies in sync and reducing deltas from both
+  sides of the fork into a single delta.
